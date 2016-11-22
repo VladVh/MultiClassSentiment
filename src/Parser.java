@@ -13,20 +13,20 @@ import java.util.regex.Pattern;
  * Created by Vlad on 19.11.2016.
  */
 public class Parser {
-    private static final String STRING_PATTERN = "<(.+?)>";
+    private static final String STRING_REGEX = "<(.+?)>";
+    private static final String WORDS_REGEX = "[a-zA-Z]{2,20}";
 
-    private static final Pattern FILE_PATTERN = Pattern.compile(STRING_PATTERN);
+    private static final Pattern FILE_PATTERN = Pattern.compile(STRING_REGEX);
+    private static final Pattern WORDS_PATTERN = Pattern.compile(WORDS_REGEX);
 
-
-    private static final Map<String, List<String>> filesData = new HashMap<String, List<String>>();
-
-    public static void readAllFiles(String path) throws IOException {
+    public static List<List<String>> readAllTrainFiles(String path) throws IOException {
+        List<List<String>> filesData = new ArrayList<>();
         File folder = new File(path);
         File[] files = folder.listFiles();
         for (File file : files) {
             String content = FileUtils.readFileToString(file, "UTF-8");
             Matcher matcher = FILE_PATTERN.matcher(content);
-            List<String> strings = new ArrayList<String>();
+            List<String> strings = new ArrayList<>();
             while (matcher.find()) {
                 String group = matcher.group();
                 strings.add(group);
@@ -36,11 +36,25 @@ public class Parser {
 //                }
                 //System.out.println(matcher.group());
             }
-            filesData.put(file.getName(), strings);
+            filesData.add(strings);
         }
+        return filesData;
     }
 
-    public static Map<String, List<String>> getData() {
+    public static Map<String, List<String>> readAllTestFiles(String path) throws IOException {
+        Map<String, List<String>> filesData = new HashMap<>();
+        File folder = new File(path);
+        File[] files = folder.listFiles();
+        for (File file : files) {
+            String content = FileUtils.readFileToString(file, "UTF-8");
+            //content.replaceAll("<", " ");
+            List<String> words = new ArrayList<>();
+            Matcher matcher = WORDS_PATTERN.matcher(content);
+            while (matcher.find()) {
+                words.add(matcher.group());
+            }
+            filesData.put(file.getName(), words);
+        }
         return filesData;
     }
 }

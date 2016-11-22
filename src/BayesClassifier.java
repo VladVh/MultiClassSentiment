@@ -19,15 +19,13 @@ public class BayesClassifier {
             new EmotionClass("R"),new EmotionClass("S"),new EmotionClass("T"),new EmotionClass("U"),new EmotionClass("V"),
             new EmotionClass("W"),new EmotionClass("X"),new EmotionClass("Y"),new EmotionClass("Y'"),new EmotionClass("Z")};
 
+    private static Map<String, Double> likelihoodPerClass;
+
     private static final String PARAMS_PATTERN = "([A-Z']+(\\s)*([0-9]{1},*)+)";
     private static final Pattern SEGMENT_PATTERN = Pattern.compile(PARAMS_PATTERN);
 
-    public BayesClassifier(Map<String, List<String>> data) {
-        this.filesData = data;
-    }
-
-    public static void train(Map<String, List<String>> data) {
-        for (List<String> fragments : data.values()) {
+    public static void train(List<List<String>> data) {
+        for (List<String> fragments : data) {
             for (String fragment : fragments) {
                 Matcher matcher = SEGMENT_PATTERN.matcher(fragment);
                 String params = matcher.group();
@@ -49,7 +47,20 @@ public class BayesClassifier {
             }
             docsCount++;
         }
+
     }
+
+//    private static void train() {
+//        for (EmotionClass emotionClass : emotions) {
+//            int wordsCount = emotionClass.getWordsCount();
+//            Map<String, Double> condProbabilities = new HashMap<>();
+//
+//            Map<String, Integer> tokens = emotionClass.getTokenCount();
+//            for (Map.Entry<String, Integer> entry : tokens.entrySet()) {
+//                //double value = entry.getValue() + 1
+//            }
+//        }
+//    }
 
     private static List<EmotionClass> parseParameters(String params) {
         char prev = ' ';
@@ -75,5 +86,25 @@ public class BayesClassifier {
             }
         }
         return null;
+    }
+
+    public static void classify(Map<String, List<String>> data) {
+        for (List<String> words : data.values()) {
+            likelihoodPerClass = new HashMap<>();
+
+            for (EmotionClass emotionClass : emotions) {
+                int wordsCount = emotionClass.getWordsCount();
+                Map<String, Integer> tokenCount = emotionClass.getTokenCount();
+                double totalValue = 0;
+                double value;
+                for (String word : words) {
+                    value = Math.log((tokenCount.get(word) + 1) / (wordsCount + vocabulary.size()));
+                    totalValue += value;
+                }
+                likelihoodPerClass.put(emotionClass.toString(), totalValue);
+            }
+        }
+
+        //compare
     }
 }

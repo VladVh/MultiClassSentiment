@@ -9,6 +9,7 @@ public class EmotionClass {
 
     private int wordsCount;
     private Map<String, Integer> tokenCount = new HashMap<>();
+    private Map<String, Double> condProbabilities;
 
     public EmotionClass(String name) {
         NAME = name;
@@ -29,5 +30,21 @@ public class EmotionClass {
     @Override
     public String toString() {
         return NAME;
+    }
+
+    public int getWordsCount() {
+        return wordsCount;
+    }
+
+    public Map<String, Integer> getTokenCount() {
+        return tokenCount;
+    }
+
+    public Map<String, Double> getCondProbabilities() {
+        return condProbabilities;
+    }
+
+    public void setCondProbabilities(Map<String, Double> condProbabilities) {
+        this.condProbabilities = condProbabilities;
     }
 }
