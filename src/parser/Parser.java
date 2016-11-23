@@ -1,3 +1,6 @@
+package parser;
+
+import model.ParamsInfo;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -11,8 +14,8 @@ import java.util.regex.Pattern;
  */
 public class Parser {
     private static final String STRING_REGEX = "<(.+?)>";
-    private static final String WORDS_REGEX = "[a-zA-Z']{2,20}";
-    private static final String PARAMS_REGEX = "([A-Z']+(\\s)*([0-9]{1,2},*)+)";
+    private static final String WORDS_REGEX = "[a-zA-Z'-]{2,20}";
+    private static final String PARAMS_REGEX = "(([A-Z]+'*)+(\\s)*([0-9]{1,2},*)+)";
 
     private static final Pattern FILE_PATTERN = Pattern.compile(STRING_REGEX);
     private static final Pattern WORDS_PATTERN = Pattern.compile(WORDS_REGEX);
@@ -29,7 +32,7 @@ public class Parser {
             System.out.println("exception during reading stopwords");
             e.printStackTrace();
         }
-        String[] words = content.split(" ");
+        String[] words = content.split("\r\n|\t");
         Collections.addAll(stopWords, words);
     }
 
@@ -46,10 +49,18 @@ public class Parser {
                 String group = matcher.group();
 
                 Matcher paramsMatcher = SEGMENT_PATTERN.matcher(group);
-                String params = paramsMatcher.group();
+                paramsMatcher.find();
+
+                String params = null;
+                try {
+                    params = paramsMatcher.group();
+                } catch (IllegalStateException exception) {
+                    System.err.println("Params not found for: " + group);
+                    continue;
+                }
                 List<String> emotions = parseParameters(params);
 
-                List<String> words = getWordsFromText(group.toLowerCase());
+                List<String> words = getWordsFromText(group.substring(0, group.indexOf(params)).toLowerCase());
                 words = removeStopWords(words);
 
                 fileInfo.add(new ParamsInfo(words, emotions));

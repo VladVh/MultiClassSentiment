@@ -1,3 +1,6 @@
+import classifier.BayesClassifier;
+import parser.Parser;
+
 import java.io.IOException;
 
 /**

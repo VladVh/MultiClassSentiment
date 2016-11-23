@@ -1,3 +1,5 @@
+package model;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +12,6 @@ public class EmotionClass {
 
     private int wordsCount;
     private Map<String, Integer> tokenCount = new HashMap<>();
-    private Map<String, Double> condProbabilities;
 
     public EmotionClass(String name) {
         NAME = name;
@@ -39,13 +40,5 @@ public class EmotionClass {
 
     public Map<String, Integer> getTokenCount() {
         return tokenCount;
-    }
-
-    public Map<String, Double> getCondProbabilities() {
-        return condProbabilities;
-    }
-
-    public void setCondProbabilities(Map<String, Double> condProbabilities) {
-        this.condProbabilities = condProbabilities;
     }
 }

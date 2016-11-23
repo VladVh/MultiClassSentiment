@@ -1,10 +1,14 @@
+package classifier;
+
+import model.EmotionClass;
+import model.ParamsInfo;
+
 import java.util.*;
 
 /**
  * Created by Vlad on 21.11.2016.
  */
 public class BayesClassifier {
-    private static int docsCount = 0;
     private static Set<String> vocabulary = new HashSet<>();
 
     private static final EmotionClass[] emotions = new EmotionClass[] {new EmotionClass("A"), new EmotionClass("B"),
@@ -32,28 +36,15 @@ public class BayesClassifier {
                     vocabulary.add(word);
                 }
                 for (EmotionClass emotionClass : emotionClasses) {
+                    if (wordsList == null || emotionClass == null) {
+                        System.out.println();
+                    }
                     emotionClass.addData(wordsList);
                 }
             }
-            //docsCount++;
         }
 
     }
-
-//    private static void train() {
-//        for (EmotionClass emotionClass : emotions) {
-//            int wordsCount = emotionClass.getWordsCount();
-//            Map<String, Double> condProbabilities = new HashMap<>();
-//
-//            Map<String, Integer> tokens = emotionClass.getTokenCount();
-//            for (Map.Entry<String, Integer> entry : tokens.entrySet()) {
-//                //double value = entry.getValue() + 1
-//            }
-//        }
-//    }
-
-
-
 
     private static EmotionClass getEmotionByString(String name) {
         for (EmotionClass emotionClass : emotions) {
@@ -74,7 +65,8 @@ public class BayesClassifier {
                 double totalValue = 0;
                 double value;
                 for (String word : words) {
-                    value = Math.log((tokenCount.get(word) + 1) / (wordsCount + vocabulary.size()));
+                    int count = tokenCount.containsKey(word) ? tokenCount.get(word) : 0;
+                    value = Math.log((count + 1.0) / (wordsCount + vocabulary.size()));
                     totalValue += value;
                 }
                 likelihoodPerClass.put(emotionClass.toString(), totalValue);
@@ -82,14 +74,11 @@ public class BayesClassifier {
 
             Map.Entry<String, Double> max = likelihoodPerClass.entrySet().iterator().next();
             for (Map.Entry<String, Double> entry : likelihoodPerClass.entrySet()) {
-                if (entry.getValue() > max.getValue()) {
+                if (entry.getValue() < max.getValue()) {
                     max = entry;
                 }
             }
             System.out.println(max.getKey() + " " + max.getValue());
         }
-
-        //compare
-
     }
 }
