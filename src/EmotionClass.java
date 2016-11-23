@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,7 +16,7 @@ public class EmotionClass {
         NAME = name;
     }
 
-    public void addData(String[] words) {
+    public void addData(List<String> words) {
         for (String word : words) {
             if (tokenCount.containsKey(word)) {
                 int count = tokenCount.get(word);
@@ -24,7 +25,7 @@ public class EmotionClass {
                 tokenCount.put(word, 1);
             }
         }
-        wordsCount += words.length;
+        wordsCount += words.size();
     }
 
     @Override

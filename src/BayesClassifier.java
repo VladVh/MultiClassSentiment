@@ -1,13 +1,9 @@
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by Vlad on 21.11.2016.
  */
 public class BayesClassifier {
-    private static Map<String, List<String>> filesData;
-
     private static int docsCount = 0;
     private static Set<String> vocabulary = new HashSet<>();
 
@@ -21,31 +17,25 @@ public class BayesClassifier {
 
     private static Map<String, Double> likelihoodPerClass;
 
-    private static final String PARAMS_PATTERN = "([A-Z']+(\\s)*([0-9]{1},*)+)";
-    private static final Pattern SEGMENT_PATTERN = Pattern.compile(PARAMS_PATTERN);
 
-    public static void train(List<List<String>> data) {
-        for (List<String> fragments : data) {
-            for (String fragment : fragments) {
-                Matcher matcher = SEGMENT_PATTERN.matcher(fragment);
-                String params = matcher.group();
+    public static void train(List<List<ParamsInfo>> data) {
+        for (List<ParamsInfo> fragments : data) {
+            for (ParamsInfo info : fragments) {
 
-                List<EmotionClass> emotionClasses = parseParameters(params);
+                List<EmotionClass> emotionClasses = new ArrayList<>();
+                for (String emotionString : info.getEmotions()) {
+                    emotionClasses.add(getEmotionByString(emotionString));
+                }
 
-                String words = fragment.substring(0, fragment.indexOf(params));
-                String[] wordsList = words.split(" ");
-
+                List<String> wordsList = info.getWords();
                 for (String word : wordsList) {
                     vocabulary.add(word);
                 }
                 for (EmotionClass emotionClass : emotionClasses) {
                     emotionClass.addData(wordsList);
                 }
-//                while (matcher1.find()) {
-//
-//                }
             }
-            docsCount++;
+            //docsCount++;
         }
 
     }
@@ -62,21 +52,7 @@ public class BayesClassifier {
 //        }
 //    }
 
-    private static List<EmotionClass> parseParameters(String params) {
-        char prev = ' ';
-        List<EmotionClass> emotionClasses = new ArrayList<>();
-        for (char ch : params.toCharArray()) {
-            if (Character.isAlphabetic(ch)) {
-                emotionClasses.add(getEmotionByString(String.valueOf(ch)));
-            } else if (Character.isDigit(ch)) {
 
-            } else if (ch == '\'') {
-                emotionClasses.add(getEmotionByString(String.valueOf(prev + '\'')));
-            }
-            prev = ch;
-        }
-        return emotionClasses;
-    }
 
 
     private static EmotionClass getEmotionByString(String name) {
@@ -103,8 +79,17 @@ public class BayesClassifier {
                 }
                 likelihoodPerClass.put(emotionClass.toString(), totalValue);
             }
+
+            Map.Entry<String, Double> max = likelihoodPerClass.entrySet().iterator().next();
+            for (Map.Entry<String, Double> entry : likelihoodPerClass.entrySet()) {
+                if (entry.getValue() > max.getValue()) {
+                    max = entry;
+                }
+            }
+            System.out.println(max.getKey() + " " + max.getValue());
         }
 
         //compare
+
     }
 }
