@@ -22,13 +22,18 @@ public class Parser {
     private static final Set<String> stopWords = new TreeSet<>();
 
     static {
-        String content = FileUtils.readFileToString(STOP_WORDS_PATH, "UTF-8");
+        String content = null;
+        try {
+            content = FileUtils.readFileToString(new File(STOP_WORDS_PATH), "UTF-8");
+        } catch (IOException e) {
+            System.out.println("exception during reading stopwords");
+            e.printStackTrace();
+        }
         String[] words = content.split(" ");
         Collections.addAll(stopWords, words);
     }
 
     public static List<List<ParamsInfo>> readAllTrainFiles(String path) throws IOException {
-        //List<List<String>> filesData = new ArrayList<>();
         List<List<ParamsInfo>> filesData = new ArrayList<>();
 
         File folder = new File(path);

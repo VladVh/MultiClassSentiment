@@ -6,8 +6,8 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) {
         try {
-            BayesClassifier.train(Parser.readAllTrainFiles("E:\\Навчання\\5 - КУРС\\Марченко\\Docs\\part 3\\train"));
-            BayesClassifier.classify(Parser.readAllTestFiles("E:\\Навчання\\5 - КУРС\\Марченко\\Docs\\part 3\\test"));
+            BayesClassifier.train(Parser.readAllTrainFiles("E:\\University\\Docs\\train"));
+            BayesClassifier.classify(Parser.readAllTestFiles("E:\\University\\Docs\\test"));
         } catch (IOException e) {
             e.printStackTrace();
         }
